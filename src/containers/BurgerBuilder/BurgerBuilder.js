@@ -52,7 +52,7 @@ class BurgerBuilder extends Component {
             },
             deliveryMethod: 'fastest'
         };
-        axios.post('/orders.json', order).then(response => {
+        axios.post('/orders', order).then(response => {
             this.setState({loading: false, purchasing: false});
         }).catch(error => {
             this.setState({loading: false, purchasing: false});
