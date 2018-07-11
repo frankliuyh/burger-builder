@@ -12,7 +12,6 @@ import * as actionTypes from '../../store/actions';
 
 class BurgerBuilder extends Component {
     state = {
-        purchasable: false,
         purchasing: false,
         loading: false,
         error: false
@@ -35,21 +34,12 @@ class BurgerBuilder extends Component {
     }
     
     purchaseContinueHandler = () => {
-        const queryParams = []
-        for (let i in this.props.ings) {
-            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.props.ings[i]));
-        }
-        queryParams.push('price=' + this.props.price);
-        const queryString = queryParams.join('&');
-        this.props.history.push({
-            pathname: '/checkout',
-            search: '?' + queryString
-        });
+        this.props.history.push('/checkout');
     }
     
     updatePurchaseState = (ingredients) => {
         const sum = Object.keys(ingredients).map(key => ingredients[key]).reduce((acc, el) => acc + el, 0);
-        this.setState({purchasable: sum > 0});
+        return sum > 0;
     }
     
     render () {
@@ -63,7 +53,7 @@ class BurgerBuilder extends Component {
             burger = (
                 <React.Fragment>
                     <Burger ingredients={this.props.ings} />
-                    <BuildControls ingredientAdded={this.props.onIngredientAdded} ingredientRemoved={this.props.onIngredientRemoved} disabled={disabledInfo} price={this.props.price} purchasable={this.state.purchasable} ordered={this.purchaseHandler} />
+                    <BuildControls ingredientAdded={this.props.onIngredientAdded} ingredientRemoved={this.props.onIngredientRemoved} disabled={disabledInfo} price={this.props.price} purchasable={this.updatePurchaseState(this.props.ings)} ordered={this.purchaseHandler} />
                 </React.Fragment>
             );
             orderSummary = <OrderSummary ingredients={this.props.ings} price={this.props.price} 
