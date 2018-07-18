@@ -12,88 +12,90 @@ import * as actions from '../../../store/actions/index';
 class ContactData extends Component {
 	state = {
 		orderForm: {
-                  name: {
-                  	elementType: 'input',
-                  	elementConfig: {
-                  		type: 'text',
-                  		placeholder: 'Your Name'
-                  	},
-                  	value: '',
-                        validation: {
-                              required: true
-                        },
-                        valid: false,
-                        touched: false
-                  },
-                  street: {
-                  	elementType: 'input',
-                  	elementConfig: {
-                  		type: 'text',
-                  		placeholder: 'Street'
-                  	},
-                  	value: '',
-                        validation: {
-                              required: true
-                        },
-                        valid: false,
-                        touched: false
-                  },
-                  zipCode: {
-                  	elementType: 'input',
-                  	elementConfig: {
-                  		type: 'text',
-                  		placeholder: 'Zip Code'
-                  	},
-                  	value: '',
-                        validation: {
-                              required: true,
-                              minLength: 5,
-                              maxLength: 5
-                        },
-                        valid: false,
-                        touched: false
-                  },
-                  country: {
-                  	elementType: 'input',
-                  	elementConfig: {
-                  		type: 'text',
-                  		placeholder: 'Country'
-                  	},
-                  	value: '',
-                        validation: {
-                              required: true
-                        },
-                        valid: false,
-                        touched: false
-                  },
-                  email: {
-                  	elementType: 'input',
-                  	elementConfig: {
-                  		type: 'email',
-                  		placeholder: 'Your Email'
-                  	},
-                  	value: '',
-                        validation: {
-                              required: true
-                        },
-                        valid: false,
-                        touched: false
-                  },
-                  deliveryMethod: {
-                  	elementType: 'select',
-                  	elementConfig: {
-                  		options: [
-                  			{value: 'fastest', displayValue: 'Fastest'},
-                  			{value: 'cheapest', displayValue: 'Cheapest'}
-                  		]
-                  	},
-                  	value: 'fastest',
-                        validation: {},
-                        valid: true
-                  }
-		},
+            name: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your Name'
+                },
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
+            },
+            street: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Street'
+                },
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
+            },
+            zipCode: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'ZIP Code'
+                },
+                value: '',
+                validation: {
+                    required: true,
+                    minLength: 5,
+                    maxLength: 5,
+                    isNumeric: true
+                },
+                valid: false,
+                touched: false
+            },
+            country: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Country'
+                },
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false,
+                touched: false
+            },
+            email: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your E-Mail'
+                },
+                value: '',
+                validation: {
+                    required: true,
+                    isEmail: true
+                },
+                valid: false,
+                touched: false
+            },
+            deliveryMethod: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'fastest', displayValue: 'Fastest'},
+                        {value: 'cheapest', displayValue: 'Cheapest'}
+                    ]
+                },
+                value: 'fastest',
+                validation: {},
+                valid: true
+            }
+        },
         formIsValid: false
-	}
+    }
 
 	orderHandler = (event) => {
 		event.preventDefault();
@@ -109,20 +111,36 @@ class ContactData extends Component {
         this.props.onOrderBurger(order);
 	}
 
-      checkValidity = (value, rules) => {
-            let isValid = true;
-            if (rules.required) {
-                  isValid = value.trim() !== '' && isValid;
-            }
-            if (rules.minLength) {
-                  isValid = value.length >= rules.minLength && isValid;
-            }
-            if (rules.maxLength) {
-                  isValid = value.length <= rules.maxLength && isValid;
-            }
+      checkValidity(value, rules) {
+        let isValid = true;
+        if (!rules) {
+            return true;
+        }
+        
+        if (rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
 
-            return isValid;
-      }
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid
+        }
+
+        if (rules.isEmail) {
+            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            isValid = pattern.test(value) && isValid
+        }
+
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid
+        }
+
+        return isValid;
+    }
 
       inputChangedHandler = (event, inputIdentifier) => {
             const updatedOrderForm = {...this.state.orderForm};
